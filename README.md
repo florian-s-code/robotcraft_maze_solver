@@ -9,7 +9,7 @@ Author: David Portugal, Ingeniarius Ltd.
 
 This package contains the basic framework to solve a simple maze with the RobotCraft robot using the Stage Simulator and ROS.
 
-This is part of the ROS course of [RobotCraft, class of 2018](http://robotcraft.ingeniarius.pt/site/).
+This is part of the ROS course of [RobotCraft, class of 2018](http://robotcraft.ingeniarius.pt).
 
 ----
 ## Video
