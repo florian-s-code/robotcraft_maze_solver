@@ -80,11 +80,11 @@ define robotcraft2018_robot position(
   block( 
      color "black"
      points 4
-     point[0] [0.04 0.165]
-     point[1] [0.04 0.195]
-     point[2] [-0.04 0.195]
-     point[3] [-0.04 0.165]
-     z [0 0.032]
+     point[0] [0.07 0.165]
+     point[1] [0.07 0.195]
+     point[2] [-0.07 0.195]
+     point[3] [-0.07 0.165]
+     z [0 0.024]
   )  
   
   #front left wheel - left part:
@@ -93,31 +93,31 @@ define robotcraft2018_robot position(
      points 4
      point[0] [0.085 0.165]
      point[1] [0.085 0.195]
-     point[2] [0.04 0.195]
-     point[3] [0.04 0.165]
-     z [0.01 0.022]
+     point[2] [0.07 0.195]
+     point[3] [0.07 0.165]
+     z [0.004 0.02]
   )    
   
   #front left wheel - right part:
   block( 
      color "black"
      points 4
-     point[0] [-0.04 0.165]
-     point[1] [-0.04 0.195]
+     point[0] [-0.07 0.165]
+     point[1] [-0.07 0.195]
      point[2] [-0.085 0.195]
      point[3] [-0.085 0.165]
-     z [0.01 0.022]
+     z [0.004 0.02]
   )    
   
   #front right wheel - midblock:
   block( 
      color "black"
      points 4
-     point[0] [0.04 -0.165]
-     point[1] [0.04 -0.195]
-     point[2] [-0.04 -0.195]
-     point[3] [-0.04 -0.165]
-     z [0 0.032]
+     point[0] [0.07 -0.165]
+     point[1] [0.07 -0.195]
+     point[2] [-0.07 -0.195]
+     point[3] [-0.07 -0.165]
+     z [0 0.024]
   )    
   
   #front right wheel - left part:
@@ -126,20 +126,20 @@ define robotcraft2018_robot position(
      points 4
      point[0] [0.085  -0.165]
      point[1] [0.085  -0.195]
-     point[2] [0.04 -0.195]
-     point[3] [0.04 -0.165]
-     z [0.01 0.022]
+     point[2] [0.07 -0.195]
+     point[3] [0.07 -0.165]
+     z [0.004 0.02]
   )  
   
   #front right wheel - right part:
   block( 
      color "black"
      points 4
-     point[0] [-0.04 -0.165]
-     point[1] [-0.04 -0.195]
+     point[0] [-0.07 -0.165]
+     point[1] [-0.07 -0.195]
      point[2] [-0.085 -0.195]
      point[3] [-0.085 -0.165]
-     z [0.01 0.022]
+     z [0.004 0.02]
   ) 
   
   #line sensing (front):
