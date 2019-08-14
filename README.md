@@ -1,19 +1,19 @@
-# robotcraft2018_maze v0.2 (August 2018)
+# robotcraft_maze v0.3 (August 2019)
 
 ----
 ## General Info
 
-*robotcraft2018_maze* package for [ROS Kinetic Kame](http://wiki.ros.org/kinetic)
+*robotcraft_maze* package for [ROS Melodic Morenia](http://wiki.ros.org/melodic)
 
-Author: David Portugal, Ingeniarius Ltd.
+Author: David Portugal, ISR-UC.
 
 This package contains the basic framework to solve a simple maze with the RobotCraft robot using the Stage Simulator and ROS.
 
-This is part of the ROS course of [RobotCraft, class of 2018](http://robotcraft.ingeniarius.pt).
+This is part of the ROS course of [RobotCraft](http://robotcraft.ingeniarius.pt).
 
 ----
 ## Video
-Have a look at [**this video**](https://youtu.be/2B_4M2gSJ1M) from last year for a simple strategy to solve the maze.
+Have a look at [**this video**](https://youtu.be/2B_4M2gSJ1M) from a previous year for a simple strategy to solve the maze.
 
 ----
 ## Development
@@ -26,5 +26,5 @@ Please also create a _maze.launch_ launch file (in the "launch" folder) to launc
 After creating the launch file, just do:
 
 ```
-roslaunch robotcraft2018_maze maze.launch
+roslaunch robotcraft_maze maze.launch
 ```

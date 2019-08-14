@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package>
-  <name>robotcraft2018_maze</name>
-  <version>0.2.0</version>
-  <description>The robotcraft2018_maze package</description>
+  <name>robotcraft_maze</name>
+  <version>0.3.0</version>
+  <description>The robotcraft_maze package</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->
