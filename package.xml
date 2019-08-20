@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package>
-  <name>robotcraft_maze</name>
+  <name>maze_robotcraft</name>
   <version>0.3.0</version>
   <description>The robotcraft_maze package</description>
 

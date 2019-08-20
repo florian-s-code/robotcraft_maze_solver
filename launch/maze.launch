@@ -1,8 +1,12 @@
 <!-- maze.launch: launch stage with a maze_solver node -->
 
 <launch>
-    <node pkg="stage_ros" type="stageros" name="stageros" args="$(find robotcraft_maze)/world/robotcraft_maze.world" />
+    <node pkg="stage_ros" type="stageros" name="stageros" args="$(find maze_robotcraft)/world/robotcraft_maze.world" />
     
-    <!-- Don't forget to create and compile your node and add it here -->
+    <node pkg="maze_robotcraft" type="maze_BASICsolver" name="basic_solver">
+	<remap from="ir_front_sensor" to="base_scan_1" />
+	<remap from="ir_left_sensor" to="base_scan_2" />
+	<remap from="ir_right_sensor" to="base_scan_3" />
+    </node>
 
 </launch>  
