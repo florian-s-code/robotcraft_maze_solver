@@ -3,7 +3,7 @@
 <launch>
     <node pkg="stage_ros" type="stageros" name="stageros" args="$(find maze_robotcraft)/world/robotcraft_maze.world" />
     
-    <node pkg="maze_robotcraft" type="maze_BASICsolver" name="basic_solver">
+    <node pkg="maze_robotcraft" type="maze_BASICsolver" name="basic_solver" output="screen">
 	<remap from="ir_front_sensor" to="base_scan_1" />
 	<remap from="ir_left_sensor" to="base_scan_2" />
 	<remap from="ir_right_sensor" to="base_scan_3" />
