@@ -16,6 +16,8 @@ add_service_files(FILES
   TargetPose.srv
 )
 
+generate_messages(DEPENDENCIES geometry_msgs)
+
 catkin_package()
 
 include_directories(
