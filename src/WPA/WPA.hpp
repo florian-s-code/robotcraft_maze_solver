@@ -33,11 +33,10 @@ class ROSWavefrontPlanner
 
     int8_t getOccupancyValue(Coord cell);
     int getCellValue(Coord cell);
-    bool checkCoord(Coord cell);
-    std::deque<Coord> getAdjacentCells(const Coord& cell);
+    bool isPathableCell(Coord cell);
+    std::vector<Coord> getAdjacentCoords(const Coord& cell);
     void getCoordFromIndex(int cell_index, int& x, int& y);
     void setCellValue(Coord cell, int value);
-    void createPath();
 };
 
 #endif /* WPA_HPP */

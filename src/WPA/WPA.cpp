@@ -14,37 +14,38 @@ int ROSWavefrontPlanner::getCellValue(ROSWavefrontPlanner::Coord cell)
     return m_WPA_map[cell.y * m_width + cell.x];
 }
 
-bool ROSWavefrontPlanner::checkCoord(ROSWavefrontPlanner::Coord cell)
+bool ROSWavefrontPlanner::isPathableCell(ROSWavefrontPlanner::Coord cell)
 {
     // out-of-bound check
     if (!(cell.x >= 0 && cell.y >= 0 && cell.x < m_height && cell.y < m_width))
         return false;
 
     // check if the cell is not an obstacle and if it was not already given a value
-    return (getOccupancyValue(cell) == 0 && getCellValue(cell) == 0);
+    return (getOccupancyValue(cell) == 0);
 }
 
-std::deque<ROSWavefrontPlanner::Coord> ROSWavefrontPlanner::getAdjacentCells(const ROSWavefrontPlanner::Coord& cell)
+std::vector<ROSWavefrontPlanner::Coord> ROSWavefrontPlanner::getAdjacentCoords(const ROSWavefrontPlanner::Coord& cell)
 {
-    std::deque<ROSWavefrontPlanner::Coord> cells;
+    std::vector<ROSWavefrontPlanner::Coord> coords;
 
-    // iterate over every adjacent cell and add them to list if
+    // iterate over every adjacent coord and add them to list if
     // - it is not out of bound
     // - it is traversable (occupancy value == 0)
     // - they don't already have a value
     for (int i = 0; i < 4; i++)
     {
-        ROSWavefrontPlanner::Coord next_cell;
-        next_cell.x = cell.x + A[i].x;
-        next_cell.y = cell.y + A[i].y;
+        ROSWavefrontPlanner::Coord next_coord;
+        next_coord.x = cell.x + A[i].x;
+        next_coord.y = cell.y + A[i].y;
 
-        if (checkCoord(next_cell))
+        if (isPathableCell(next_coord) ) //check bound and occupancy
         {
-            cells.push_back(next_cell);  // add to the end of the grid
+	    if(getCellValue(next_coord) == 0) //check if it has value
+            	coords.push_back(next_coord);  // add to the end of the grid
         }
     }
 
-    return cells;
+    return coords;
 }
 
 void ROSWavefrontPlanner::getCoordFromIndex(int cell_index, int& x, int& y)
@@ -109,7 +110,7 @@ void ROSWavefrontPlanner::createMap()
         cells_to_check.pop_front();
 
         int cell_value = getCellValue(cell);
-        auto adjacent_cells = getAdjacentCells(cell);
+        auto adjacent_cells = getAdjacentCoords(cell);
 
         for (int i = 0; i < adjacent_cells.size(); i++)
         {
@@ -124,6 +125,8 @@ int* ROSWavefrontPlanner::getMap()
     return m_WPA_map.data();
 }
 
-void ROSWavefrontPlanner::createPath()
-{
-}
+
+
+
+
+
