@@ -50,11 +50,11 @@ void ROSWavefrontPlanner::setCellValue(ROSWavefrontPlanner::Coord cell, int valu
   m_WPA_map[ cell.y*m_width + cell.x ] = value;
 }
 
-ROSWavefrontPlanner::ROSWavefrontPlanner(int width, int height, const int8_t * occupancy_grid)
+ROSWavefrontPlanner::ROSWavefrontPlanner(int width, int height, const std::vector<int8_t> &occupancy_grid)
 	:m_width(width), m_height(height)
 {
   //copy the occupancy_grid into the object
-  m_occupancy_grid = std::vector<int8_t>(occupancy_grid, occupancy_grid + (m_width*m_height-1) );
+  m_occupancy_grid = std::vector<int8_t>(occupancy_grid.begin(), occupancy_grid.end() );
 
   //create empty map for storing algorithm results
   m_WPA_map = std::vector<int>(m_width*m_height, 0);
