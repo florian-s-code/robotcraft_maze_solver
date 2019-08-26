@@ -10,7 +10,8 @@
 #include "geometry_msgs/Twist.h"
 #include "geometry_msgs/Twist.h"
 
-const float check_distance = 0.7;
+const float checkf_distance = 0.4;
+const float checks_distance = 0.5;
 
 
 class MazeBasicController 
@@ -93,8 +94,9 @@ private:
     {
         auto msg = geometry_msgs::Twist();
 
-	if( front_distance < check_distance ) {
+	if( front_distance < checkf_distance ) {
   	    state = TURNRIGHT;
+            
   	    return msg;
 	}
 
@@ -106,12 +108,14 @@ private:
     {
         auto msg = geometry_msgs::Twist();
 	//state transition
-	if( front_distance < check_distance ) {
+	if( front_distance < checkf_distance ) {
   	    state = TURNRIGHT;
+            
   	    return msg;
 	}
-	if( left_distance > check_distance ) {
+	if( left_distance > checks_distance ) {
   	    state = TURNLEFT;
+            
   	    return msg;
 	}
 
@@ -123,12 +127,13 @@ private:
     {
         auto msg = geometry_msgs::Twist();
 	//state transition
-	if( front_distance > check_distance ) {
+	if( front_distance > 0.6 && left_distance >=0.5 ) {
   	    state = FOLLOWING;
   	    return msg;
 	}
 	
 	msg.angular.z = -0.4;
+        msg.linear.x = 0.06;
 	updatePledge(-1);
 	return msg;
     }
@@ -137,12 +142,13 @@ private:
     {
         auto msg = geometry_msgs::Twist();
 	//state transition
-	if( left_distance < check_distance ) {
+	if( left_distance < checks_distance ) {
   	    state = FOLLOWING;
   	    return msg;
 	}
 	
 	msg.angular.z = +0.4;
+        msg.linear.x = 0.1;
 	updatePledge(+1);
 	return msg;
     }
