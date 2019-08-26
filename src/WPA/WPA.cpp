@@ -89,6 +89,9 @@ WavefrontPlanner::WavefrontPlanner(int width, int height, const std::vector<int8
     m_start_cell.y = 0;
     m_end_cell.x = m_width - 1;
     m_end_cell.y = m_height - 1;
+
+    createMap();
+    createPath();
 }
 
 void WavefrontPlanner::setStart(int x, int y)
