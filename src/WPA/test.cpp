@@ -15,7 +15,7 @@ int main()
     int end_x = 8;
     int end_y = 8;
 
-    auto planner = ROSWavefrontPlanner(width, height, occupancy_grid);
+    auto planner = WavefrontPlanner(width, height, occupancy_grid);
     planner.setEnd(end_x, end_y);
     planner.setStart(start_x, start_y);
     planner.createMap();

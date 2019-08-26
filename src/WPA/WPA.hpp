@@ -6,7 +6,7 @@
 #include <deque>
 #include <vector>
 
-class ROSWavefrontPlanner
+class WavefrontPlanner
 {
   public:
     struct Coord
@@ -14,8 +14,8 @@ class ROSWavefrontPlanner
         int x, y;
     };
 
-    ROSWavefrontPlanner(int width, int height, const std::vector<int8_t>& occupancy_grid);
-    ROSWavefrontPlanner(){};
+    WavefrontPlanner(int width, int height, const std::vector<int8_t>& occupancy_grid);
+    WavefrontPlanner(){};
     void setStart(int x, int y);
     void setEnd(int x, int y);
     void createMap();
