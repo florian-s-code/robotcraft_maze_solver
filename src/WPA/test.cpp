@@ -1,10 +1,11 @@
 
+#include <vector>
 #include <iostream>
 #include "WPA.hpp"
 
 int main()
 {
-    int8_t occupancy_grid[81] = { 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1,
+    std::vector<int8_t> occupancy_grid = { 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1,
                                   1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0, 1,
                                   1, 0, 0, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1 };
     int width = 9;
@@ -30,4 +31,11 @@ int main()
         if ((i + 1) % width == 0)
             std::cout << std::endl;
     }
+
+    planner.createPath();
+    auto path = planner.getPath();
+    std::cout << "path size: " << path.size() << std::endl;
+    for(int i=0; i < path.size(); i++) {
+        std::cout << path[i].x << " " << path[i].y << std::endl;
+    }	
 }

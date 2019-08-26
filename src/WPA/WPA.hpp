@@ -19,7 +19,9 @@ class ROSWavefrontPlanner
     void setStart(int x, int y);
     void setEnd(int x, int y);
     void createMap();
+    void createPath();
     int* getMap();
+    std::vector<Coord> getPath() { return m_path; };
 
   private:
     int m_width, m_height;
@@ -37,6 +39,7 @@ class ROSWavefrontPlanner
     std::vector<Coord> getAdjacentCoords(const Coord& cell);
     void getCoordFromIndex(int cell_index, int& x, int& y);
     void setCellValue(Coord cell, int value);
+    Coord getNextPathCell(const Coord& cell, bool direction_X);
 };
 
 #endif /* WPA_HPP */

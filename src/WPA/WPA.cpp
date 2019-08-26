@@ -1,9 +1,15 @@
 #include "WPA.hpp"
 
+#include <stdexcept>
 #include <stdint.h>
 #include <algorithm>
 #include <deque>
 #include <vector>
+
+//DEBUG
+#include <iostream>
+
+
 int8_t ROSWavefrontPlanner::getOccupancyValue(ROSWavefrontPlanner::Coord cell)
 {
     return m_occupancy_grid[cell.y * m_width + cell.x];
@@ -40,13 +46,13 @@ std::vector<ROSWavefrontPlanner::Coord> ROSWavefrontPlanner::getAdjacentCoords(c
 
         if (isPathableCell(next_coord) ) //check bound and occupancy
         {
-	    if(getCellValue(next_coord) == 0) //check if it has value
-            	coords.push_back(next_coord);  // add to the end of the grid
+            coords.push_back(next_coord);  // add to the end of the grid
         }
     }
 
     return coords;
 }
+
 
 void ROSWavefrontPlanner::getCoordFromIndex(int cell_index, int& x, int& y)
 {
@@ -114,8 +120,10 @@ void ROSWavefrontPlanner::createMap()
 
         for (int i = 0; i < adjacent_cells.size(); i++)
         {
-            setCellValue(adjacent_cells[i], cell_value + 1);
-            cells_to_check.push_back(adjacent_cells[i]);
+            if(getCellValue(adjacent_cells[i]) == 0) { //make sure it has no value yet
+                setCellValue(adjacent_cells[i], cell_value + 1);
+                cells_to_check.push_back(adjacent_cells[i]);
+            }
         }
     }
 }
@@ -125,6 +133,69 @@ int* ROSWavefrontPlanner::getMap()
     return m_WPA_map.data();
 }
 
+ROSWavefrontPlanner::Coord ROSWavefrontPlanner::getNextPathCell(const Coord& current_cell, bool direction_X)
+{
+    int current_value = getCellValue(current_cell);
+    
+    auto adjacent_coords = getAdjacentCoords(current_cell);
+    std::vector<ROSWavefrontPlanner::Coord> possible_cells;
+
+
+    for(int i = 0; i < adjacent_coords.size(); i++) {
+        if(  !isPathableCell(adjacent_coords[i]) )
+            continue;
+        else {
+            //we check value first
+            if(getCellValue(adjacent_coords[i]) > current_value)
+                continue;
+            //if the cell is in the direction we are travelling, we use it
+	    if(adjacent_coords[i].x != current_cell.x && direction_X)
+    	        return adjacent_coords[i];
+	    if(adjacent_coords[i].y != current_cell.y && !direction_X)
+    	        return adjacent_coords[i];
+	    //otherwise we just add it as a candidate
+            possible_cells.push_back(adjacent_coords[i]);
+        }
+    }
+    if(possible_cells.size() < 1) {
+	throw std::logic_error("No path found");
+    }
+    //we return the first possible candidate, no priority
+    return possible_cells[0];
+}
+
+void ROSWavefrontPlanner::createPath()
+{
+    ROSWavefrontPlanner::Coord current_cell = m_start_cell;
+    bool direction_X = true; //store if we are currently going on X axis
+
+    std::vector<ROSWavefrontPlanner::Coord> path = {current_cell};
+
+    while(getCellValue(current_cell) != 1) {
+        /*while we are not at the end*/
+        ROSWavefrontPlanner::Coord next_cell;
+        try {
+            next_cell = getNextPathCell(current_cell, direction_X);
+        } catch(std::logic_error) {
+	    break;
+        }
+        //update the direction of travel
+        if(next_cell.x != current_cell.x) {
+	     direction_X = true;
+        }
+        else {
+            direction_X = false;
+        }
+
+        path.push_back(next_cell);
+        current_cell = next_cell;
+    }
+
+    path.push_back(m_end_cell); //add the last cell
+
+    m_path = path;
+
+}
 
 
 
