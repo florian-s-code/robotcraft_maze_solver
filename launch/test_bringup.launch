@@ -1,0 +1,6 @@
+<launch>
+        <include file="$(find robotcraft2019_driver_g02)/launch/robot_firmware.launch" />
+        <include file="$(find robotcraft2019_driver_g02)/launch/robot_driver.launch" />
+        <node pkg="maze_robotcraft" type="maze_BASICsolver" name="basic_solver" output="screen" />
+</launch>
+        
