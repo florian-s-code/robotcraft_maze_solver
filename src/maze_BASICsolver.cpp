@@ -4,7 +4,7 @@
 
 #include "ros/ros.h"
 #include "tf/transform_datatypes.h"
-#include "sensor_msgs/LaserScan.h"
+#include "sensor_msgs/Range.h"
 #include "nav_msgs/Odometry.h"
 #include "geometry_msgs/Pose2D.h"
 #include "geometry_msgs/Twist.h"
@@ -30,16 +30,16 @@ private:
 
     float x, y, theta = 0;
 
-    void frontSensorCallback(const sensor_msgs::LaserScan::ConstPtr& range_msg) {
-	front_distance = range_msg->ranges[0];
+    void frontSensorCallback(const sensor_msgs::Range::ConstPtr& range_msg) {
+	front_distance = range_msg->range;
     }
 
-    void rightSensorCallback(const sensor_msgs::LaserScan::ConstPtr& range_msg) {
-	right_distance = range_msg->ranges[0];
+    void rightSensorCallback(const sensor_msgs::Range::ConstPtr& range_msg) {
+	right_distance = range_msg->range;
     }
     
-    void leftSensorCallback(const sensor_msgs::LaserScan::ConstPtr& range_msg) {
-	left_distance = range_msg->ranges[0];
+    void leftSensorCallback(const sensor_msgs::Range::ConstPtr& range_msg) {
+	left_distance = range_msg->range;
     }
 
     void odomCallback(const nav_msgs::Odometry::ConstPtr& odom_msg) {
