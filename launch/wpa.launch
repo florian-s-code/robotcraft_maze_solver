@@ -1,0 +1,15 @@
+<!-- maze.launch: launch stage with a maze_solver node -->
+
+<launch>
+    
+
+    <node pkg="map_server" type="map_server" name="map_server" args="$(find maze_robotcraft)/world/mapTrial.yaml" />
+    <node pkg="maze_robotcraft" type="maze_WPAplanner" name="planner" output="screen" >
+         <param name="start_x" value="0.0" />
+         <param name="start_y" value="0.0" />
+         <param name="end_x" value="0.940" />
+         <param name="end_y" value="-2.907" />
+    </node>
+    <!--<node pkg="maze_robotcraft" type="maze_driver" name="driver" output="screen"/>-->
+
+</launch>  
