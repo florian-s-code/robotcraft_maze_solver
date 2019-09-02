@@ -8,19 +8,14 @@
 #include "nav_msgs/Odometry.h"
 #include "geometry_msgs/Pose2D.h"
 #include "geometry_msgs/Twist.h"
-#include "geometry_msgs/Twist.h"
-
-const float checkf_distance = 0.4;
-const float checks_distance = 0.5;
 
 
-class MazeBasicController 
-{
-private:
+//const float checkf_distance = 0.05;
+//const float checks_distance = 0.07;
+const float checkf_distance = 0.15;
+const float checks_distance = 0.2;
 
-    enum State { BEGIN, FOLLOWING, TURNRIGHT, TURNLEFT };
-  
-    ros::NodeHandle n;
+
     ros::Publisher cmd_vel_pub;
     ros::Subscriber front_sensor_sub;
     ros::Subscriber left_sensor_sub;
@@ -28,18 +23,31 @@ private:
     ros::Subscriber odom_sub;
     //ros::Publisher set_pose_pub;
 
-    float x, y, theta = 0;
 
+//---------------------------------------------------------------------------
+
+    enum State { BEGIN, FOLLOWING, TURNRIGHT, TURNLEFT };
+
+    float x, y, theta = 0.0;
+
+    double front_distance = -999;
+    double left_distance=0.0;
+    double right_distance=0.0;
+    bool robot_stopped;
+    State state = BEGIN;
+    int pledge_number = 0; //save the total rotation done, see Pledge algorithm
+    
+// ROS callback functions
     void frontSensorCallback(const sensor_msgs::Range::ConstPtr& range_msg) {
-	front_distance = range_msg->range;
+	    front_distance = range_msg->range;
     }
 
     void rightSensorCallback(const sensor_msgs::Range::ConstPtr& range_msg) {
-	right_distance = range_msg->range;
+        right_distance = range_msg->range;
     }
     
     void leftSensorCallback(const sensor_msgs::Range::ConstPtr& range_msg) {
-	left_distance = range_msg->range;
+		left_distance = range_msg->range;
     }
 
     void odomCallback(const nav_msgs::Odometry::ConstPtr& odom_msg) {
@@ -48,40 +56,18 @@ private:
         theta = tf::getYaw(odom_msg->pose.pose.orientation);
     }
 
-    double front_distance = -999;
-    double left_distance;
-    double right_distance;
-    bool robot_stopped;
 
-    State state;
-    int pledge_number = 0; //save the total rotation done, see Pledge algorithm
-
-    geometry_msgs::Twist calculateCommand()
-    {
-        auto msg = geometry_msgs::Twist();
-        
-        switch(state) {
-	    case BEGIN:
-  	    	return stateBegin();
-  	    	break;
-  	    case FOLLOWING:
-    	    	return stateFollowing();
-    	    	break;
-    	    case TURNRIGHT:
-      	    	return stateTurnRight();
-      	    	break;
-      	    case TURNLEFT:
-		return stateTurnLeft();
-        	break;
-        }
-    }
-
+//-----------------------------------------------------------
     /* Pledge algorithm : used to avoid the robot begin stuck on wall not connected to exit
      * We sum the rotation that the robot does, we add the angle of CCW turn and
      * substract for CW turn. When this value come back to 0, the robot will go
      * straight instead of turning (ie. BEGIN state)
      */
-    void updatePledge(int increment) {
+//---------------------------------------------------
+void updatePledge(int increment) {
+	//deactivated
+	return;
+
 	pledge_number += increment;
 
         if(pledge_number == 0 && state != BEGIN) {
@@ -89,119 +75,140 @@ private:
         }
     }
 
-
-    geometry_msgs::Twist stateBegin()
+//---------------------------------------------------------------------
+    void stateBegin()
     {
-        auto msg = geometry_msgs::Twist();
-
+        geometry_msgs::Twist msg;
+       
 	if( front_distance < checkf_distance ) {
   	    state = TURNRIGHT;
-            
-  	    return msg;
+             	    
 	}
 
 	msg.linear.x = 1.0;
-	return msg;
+        cmd_vel_pub.publish(msg);
     }
-
-    geometry_msgs::Twist stateFollowing()
+//--------------------------------------------------
+    void stateFollowing()
     {
-        auto msg = geometry_msgs::Twist();
+        geometry_msgs::Twist msg;
+
 	//state transition
 	if( front_distance < checkf_distance ) {
   	    state = TURNRIGHT;
-            
-  	    return msg;
 	}
 	if( left_distance > checks_distance ) {
   	    state = TURNLEFT;
-            
-  	    return msg;
+            return;
 	}
 
-	msg.linear.x = 1.0;
-	return msg;
+	//add some correction for left
+        if( left_distance < checks_distance/2 + 0.02) {
+            msg.angular.z = -0.4;
+            msg.linear.x = 0.06;
+        } else {
+            msg.linear.x = 1.0;
+        }
+	cmd_vel_pub.publish(msg);
     }
-    
-    geometry_msgs::Twist stateTurnRight()
+ //-----------------------------------------------------   
+    void stateTurnRight()
     {
-        auto msg = geometry_msgs::Twist();
+        geometry_msgs::Twist msg;
+
 	//state transition
-	if( front_distance > 0.6 && left_distance >=0.5 ) {
-  	    state = FOLLOWING;
-  	    return msg;
+	//if( front_distance > checkf_distance && left_distance >= checkf_distance ) {
+  	if( front_distance > 2*checkf_distance) {
+            state = FOLLOWING;
 	}
 	
 	msg.angular.z = -0.4;
-        msg.linear.x = 0.06;
+        //msg.linear.x = 0.06;
 	updatePledge(-1);
-	return msg;
+	cmd_vel_pub.publish(msg);
     }
-
-    geometry_msgs::Twist stateTurnLeft()
+ //-----------------------------------------------------   
+    void stateTurnLeft()
     {
-        auto msg = geometry_msgs::Twist();
+        geometry_msgs::Twist msg;
+
 	//state transition
-	if( left_distance < checks_distance ) {
+	if( left_distance <= checks_distance ) {
   	    state = FOLLOWING;
-  	    return msg;
 	}
 	
-	msg.angular.z = +0.4;
-        msg.linear.x = 0.1;
+	msg.angular.z = 0.4;
+        msg.linear.x = 0.06;
 	updatePledge(+1);
-	return msg;
+	cmd_vel_pub.publish(msg);
+    
     }
-public:
-    MazeBasicController(){
-        // Initialize ROS
-        this->n = ros::NodeHandle();
 
-        front_sensor_sub = n.subscribe("ir_front_sensor", 10, &MazeBasicController::frontSensorCallback, this);
-        right_sensor_sub = n.subscribe("ir_right_sensor", 10, &MazeBasicController::rightSensorCallback, this);
-        left_sensor_sub = n.subscribe("ir_left_sensor", 10, &MazeBasicController::leftSensorCallback, this);
-        odom_sub = n.subscribe("odom", 10, &MazeBasicController::odomCallback, this);
 
-        cmd_vel_pub = this->n.advertise<geometry_msgs::Twist>("cmd_vel", 5);
-
-	//Initialize state
-	state = BEGIN;
+ 
+//-------------------------------------------------------------------
+    void calculateCommand()
+    {
+	ROS_INFO("Current state is %d", state);
+        
+        switch(state) {
+	    case BEGIN:
+  	    	stateBegin();
+  	    	break;
+  	    case FOLLOWING:
+    	        stateFollowing();
+    	    	break;
+    	    case TURNRIGHT:
+      	    	stateTurnRight();
+      	    	break;
+      	    case TURNLEFT:
+		stateTurnLeft();
+        	break;
+        }
     }
+
+//-------------------------------------------
 
     void run(){
-        // Send messages in a loop
-        ros::Rate loop_rate(10);
-        while(front_distance == -999) {
-		
-            ros::spinOnce();
-            loop_rate.sleep();
-        }
-        while (ros::ok())
-        {
-            // Calculate the command to apply
-            auto msg = calculateCommand();
 
-            // Publish the new command
-            this->cmd_vel_pub.publish(msg);
 
-            ros::spinOnce();
-
-            // And throttle the loop
-            loop_rate.sleep();
-        }
     }
-
-};
-
-
+//----------------------------------------------
 int main(int argc, char **argv){
     // Initialize ROS
     ros::init(argc, argv, "reactive_controller");
+   
+    ros::NodeHandle n;
+   
+    //Set the rate
+    ros::Rate loop_rate(10);
+    
+    //Publishers and Subscribers
+    front_sensor_sub = n.subscribe("ir_front_sensor", 10, frontSensorCallback);
+    right_sensor_sub = n.subscribe("ir_right_sensor", 10, rightSensorCallback);
+    left_sensor_sub = n.subscribe("ir_left_sensor", 10, leftSensorCallback);
+    odom_sub = n.subscribe("odom", 10, &odomCallback);
 
-    // Create our controller object and run it
-    auto controller = MazeBasicController();
-    controller.run();
+    cmd_vel_pub = n.advertise<geometry_msgs::Twist>("cmd_vel", 5);
 
-    // And make good on our promise
+    //wait for the sensor message to arrive before starting
+    while(front_distance == -999) {
+         ros::spinOnce();
+        loop_rate.sleep();
+    }
+
+    while (ros::ok())
+    {
+        //Start the FSM
+        // run();
+        calculateCommand();
+        ros::spinOnce();
+
+
+        // ROS_INFO("Sending velocity..");
+
+        loop_rate.sleep();
+    }
+    //4 And make good on our promise
     return 0;
 }
