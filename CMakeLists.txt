@@ -27,11 +27,15 @@ include_directories(
 
 add_executable(maze_BASICsolver src/maze_BASICsolver.cpp)
 add_executable(maze_WPAplanner src/maze_WPAplanner.cpp src/WPA/WPA.cpp)
+add_executable(maze_driver src/maze_driver.cpp)
 
 
 target_link_libraries(maze_BASICsolver 
   ${catkin_LIBRARIES}
 )
 target_link_libraries(maze_WPAplanner 
+  ${catkin_LIBRARIES}
+)
+target_link_libraries(maze_driver
   ${catkin_LIBRARIES}
 )
