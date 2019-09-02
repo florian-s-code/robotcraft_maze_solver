@@ -258,7 +258,7 @@ WavefrontPlanner::Cell WavefrontPlanner::getNextPathCell(const Cell& current_cel
         }
     }
     if(possible_cells.size() < 1) {
-        std::cout << "Bug cell : " << current_cell.x << " " << current_cell.y <<std::endl;
+        std::cout << "Bug cell : " << current_cell.x << " " << current_cell.y <<". Value : "<< current_value <<std::endl;
 	throw std::logic_error("No path found");
     }
     //we return the first possible candidate, no priority
@@ -272,6 +272,8 @@ void WavefrontPlanner::createPath()
     bool direction_X = true; //store if we are currently going on X axis
 
     std::vector<WavefrontPlanner::Cell> path = {current_cell};
+
+    std::cout << "Path creation starting " << std::endl;
 
     while(getCellValue(current_cell) != 1) {
         /*while we are not at the end*/
@@ -288,7 +290,7 @@ void WavefrontPlanner::createPath()
         else {
             direction_X = false;
         }
-
+	std::cout << "Next cell : " << next_cell.x << ", " << next_cell.y << std::endl;
         path.push_back(next_cell);
         current_cell = next_cell;
     }

@@ -52,14 +52,16 @@ class MazeWPAPlanner
             has_path = true;
         }
 
-	/*for(int i = 0; i < path.size(); i++) {
+	for(int i = 0; i < path.size(); i++) {
     	    geometry_msgs::Pose2D pose = getPoseFromCoord( path[i] );
     	    ROS_INFO("%f, %f", pose.x, pose.y);
-	}*/
+	}
 
 	if(request.id < path.size()) {
 	    response.id = request.id + 1;
-	    response.pose = getPoseFromCoord( path[request.id+1] ); 
+	    geometry_msgs::Pose2D target = getPoseFromCoord( path[request.id+1] );
+	    response.pose = target; 
+    	    ROS_INFO("Responding to request, with target (%f, %f, %f).", target.x, target.y, target.theta);
 	    return true;
 	}
 
@@ -72,7 +74,7 @@ class MazeWPAPlanner
     void mapSubCallback(const nav_msgs::OccupancyGrid::ConstPtr& map_msg)
     {
         planner = WavefrontPlanner((int)map_msg->info.width, (int)map_msg->info.height, (float)map_msg->info.origin.position.x, (float)map_msg->info.origin.position.y, (float)map_msg->info.resolution,  map_msg->data);
-        planner.setStart( 0.0, 0.0 );
+        planner.setStart(start_pos.x, start_pos.y );
         planner.setEnd(end_pos.x, end_pos.y);
 
         if (!has_map)
@@ -86,6 +88,8 @@ class MazeWPAPlanner
     {
         // Initialize ROS
         ros::NodeHandle nh("~"); //private NodeHandle to read private parameters
+        nh.param<float>("start_x", start_pos.x, 0.0);
+        nh.param<float>("start_y", start_pos.y, 0.0);
         nh.param<float>("end_x", end_pos.x, 3.920);
         nh.param<float>("end_y", end_pos.y, -2.994);
 
